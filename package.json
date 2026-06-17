@@ -1,0 +1,52 @@
+{
+  "name": "@yusuai/three",
+  "version": "0.0.1",
+  "description": "A three.js based digital twin visualization toolkit.",
+  "homepage": "https://github.com/yu-suai/three#readme",
+  "bugs": {
+    "url": "https://github.com/yu-suai/three/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yu-suai/three.git"
+  },
+  "license": "MIT",
+  "author": "yu-suai",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "workspaces": [
+    "src/digital-twin"
+  ],
+  "scripts": {
+    "clean": "node scripts/clean.cjs",
+    "build:index": "node scripts/build-index.cjs",
+    "build:digital-twin": "node scripts/build-digital-twin.cjs",
+    "build": "npm run clean && npm run build:digital-twin && npm run build:index",
+    "pack:check": "npm pack --dry-run",
+    "pub": "npm run build && npm run pack:check && npm publish --access public"
+  },
+  "keywords": [
+    "three",
+    "threejs",
+    "digital-twin",
+    "gltf",
+    "webgl"
+  ],
+  "dependencies": {
+    "events": "^3.3.0",
+    "gsap": "^3.12.5",
+    "js-md5": "^0.8.3"
+  },
+  "peerDependencies": {
+    "three": "^0.168.0"
+  }
+}
