@@ -5,6 +5,8 @@ import { LevelIndicatorNode } from './object/LevelIndicatorNode'
 import { PLCScreenNode } from './object/PLCScreenNode'
 import gsap from 'gsap'
 
+export * from './patrol'
+
 export {
 	DTViewer,
 	SeedRandom,
