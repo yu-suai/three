@@ -24,6 +24,10 @@ export class DTViewer extends DTViewerBase {
 	constructor(opts) {
 		super(opts)
 
+		if (opts.autoStartup !== false) {
+			this.startup()
+		}
+
 		this.meshGlintData = {
 			glintNodoNames: [],
 			emissiveColor: '0xf2637b',
@@ -39,6 +43,10 @@ export class DTViewer extends DTViewerBase {
 
 	// 启用data dataPath时，urlModel用于区别不同加载
 	load(model0) {
+
+		if (!this.started_) {
+			this.startup()
+		}
 
 		const model = Object.assign({}, model0)
 		console.log('$$ load', model)
