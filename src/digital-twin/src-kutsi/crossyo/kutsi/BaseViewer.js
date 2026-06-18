@@ -67,7 +67,9 @@ export default class BaseViewer extends EventEmitter {
 
 			useDraco: false, // #20240919
 
-			prefixAsset: null // #20240919
+			prefixAsset: null, // #20240919
+
+			autoStartup: true // #20260618
 		}, opts)
 
 		this.opts_.renderer = Object.assign({
@@ -80,6 +82,8 @@ export default class BaseViewer extends EventEmitter {
 
 		// gsap.ticker.remove(gsap.updateRoot)
 		this.disposed_ = false
+
+		this.started_ = false
 
 		this.size_ = {
 			w: 0,
@@ -102,9 +106,34 @@ export default class BaseViewer extends EventEmitter {
 		this.render_work__ = true
 
 		this.fly_to_sq__ = 0 // debug
+
+		if (this.opts_.autoStartup !== false) {
+			const autoStart = () => {
+				if (!this.disposed_ && !this.started_) {
+					this.startup()
+				}
+			}
+
+			if (typeof queueMicrotask === 'function') {
+				queueMicrotask(autoStart)
+			} else {
+				Promise.resolve().then(autoStart)
+			}
+		}
 	}
 
 	startup() {
+
+		// #20260618
+		if (this.started_) {
+			return this
+		}
+
+		if (!this.container_) {
+			throw new Error('[BaseViewer] startup failed: opts.container is required')
+		}
+
+		this.started_ = true
 
 		// #20220207
 		// #20220724, unsafe
@@ -243,6 +272,8 @@ export default class BaseViewer extends EventEmitter {
 		window.addEventListener('keydown', this.dump_keydown__)
 
 		// this.distanceDetector_ = 
+
+		return this
 	}
 
 	build_specs__(arr) {
@@ -392,19 +423,41 @@ export default class BaseViewer extends EventEmitter {
 
 	dispose(force_dispose_resource = true) {
 
-		if (force_dispose_resource) {
-			this.dispose_resource_()
+		if (this.disposed_) {
+			return
 		}
 
 		this.disposed_ = true
-		this.controls_.dispose()
-		this.picker_.dispose()
-		window.removeEventListener('keydown', this.dump_keydown__)
 
-		// #20230626
-		window.removeEventListener('resize', this.on_resize___)
+		if (!this.started_) {
+			return
+		}
 
-		this.renderer_.dispose()
+		if (force_dispose_resource && this.scene_) {
+			this.dispose_resource_()
+		}
+
+		if (this.controls_) {
+			this.controls_.dispose()
+		}
+
+		if (this.picker_) {
+			this.picker_.dispose()
+		}
+
+		if (this.dump_keydown__) {
+			window.removeEventListener('keydown', this.dump_keydown__)
+		}
+
+		if (this.on_resize___) {
+			window.removeEventListener('resize', this.on_resize___)
+		}
+
+		if (this.renderer_) {
+			this.renderer_.dispose()
+		}
+
+		this.started_ = false
 	}
 
 	update_camera_near_far_(len) {
