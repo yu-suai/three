@@ -1,6 +1,6 @@
 {
   "name": "@yusuai/three",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A three.js based digital twin visualization toolkit.",
   "homepage": "https://github.com/yu-suai/three#readme",
   "bugs": {
