@@ -16,6 +16,14 @@ import { PPRenderer } from './pp/PPRenderer'
 import { ControlsDistance } from './util/frame/caches'
 import { ACESFilmicToneMapping, Clock, Color, LinearSRGBColorSpace, LinearToneMapping, OrthographicCamera, PerspectiveCamera, Scene, Vector3 } from 'three'
 
+function resolve_default_asset_prefix_() {
+  try {
+    return new URL('./asset/', import.meta.url).href.replace(/\/$/, '')
+  } catch (e) {
+    return './asset'
+  }
+}
+
 export const registerClass = {
 	// import { GUI } from 'three/examples/jsm/libs/dat.gui.module'
 	GUI: null, // from r135, be removed!
@@ -59,7 +67,7 @@ export default class BaseViewer extends EventEmitter {
 
 			useDraco: false, // #20240919
 
-			prefixAsset: './asset' // #20240919
+			prefixAsset: null // #20240919
 		}, opts)
 
 		this.opts_.renderer = Object.assign({
@@ -67,7 +75,8 @@ export default class BaseViewer extends EventEmitter {
 		}, opts.renderer)
 
 		this.container_ = this.opts_.container
-		this.prefixAsset_ = this.opts_.prefixAsset //  || './asset'
+		this.prefixAsset_ = this.opts_.prefixAsset || resolve_default_asset_prefix_()
+		this.opts_.prefixAsset = this.prefixAsset_ //  || './asset'
 
 		// gsap.ticker.remove(gsap.updateRoot)
 		this.disposed_ = false
